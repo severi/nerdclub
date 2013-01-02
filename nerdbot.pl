@@ -40,9 +40,9 @@ sub insertQuote{
 	$quoteAt = $_[0];
 	$dsn = "dbi:mysql:$database:$host:$port";
 	$connect = DBI->connect($dsn, $user, $pw);
-	$query = "INSERT INTO Quotes(quote) VALUES( '$quoteAt' )";
+	$query = "INSERT INTO Quotes(quote) VALUES(?)";
 	$query_handle = $connect->prepare($query);
-	$query_handle->execute();
+	$query_handle->execute($quoteAt);
 }
 
 sub getQuotes{
@@ -69,9 +69,9 @@ sub addMsg{
 	$nick = $_[0];
 	$dsn = "dbi:mysql:$database:$host:$port";
 	$connect = DBI->connect($dsn, $user, $pw);
-	$query = "INSERT INTO Stats (nick,number) VALUES ('$nick',1) ON DUPLICATE KEY UPDATE number=number+1";
+	$query = "INSERT INTO Stats (nick,number) VALUES (?,1) ON DUPLICATE KEY UPDATE number=number+1";
 	$query_handle = $connect->prepare($query);
-	$query_handle->execute();
+	$query_handle->execute($nick);
 }
 
 sub getBest(){
@@ -93,9 +93,9 @@ sub getNumber{
 	my $nick = $_[0];
 	$dsn = "dbi:mysql:$database:$host:$port";
 	$connect = DBI->connect($dsn, $user, $pw);
-	$query = "SELECT number FROM Stats WHERE nick='$nick'";
+	$query = "SELECT number FROM Stats WHERE nick=?";
 	$query_handle = $connect->prepare($query);
-	$query_handle->execute();
+	$query_handle->execute($nick);
 	$query_handle->bind_columns(undef, \$number);
 
 	while($query_handle->fetch()) { 
@@ -110,9 +110,9 @@ sub nick_change
 	$newnick=trim(substr($newnick,1));
 	$dsn = "dbi:mysql:$database:$host:$port";
 	$connect = DBI->connect($dsn, $user, $pw);
-	$query = "UPDATE Stats SET nick='$newnick' WHERE nick='$nick'";
+	$query = "UPDATE Stats SET nick=? WHERE nick=?";
 	$query_handle = $connect->prepare($query);
-	$query_handle->execute();
+	$query_handle->execute($newnick, $nick);
 }
 
 ##################

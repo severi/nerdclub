@@ -131,9 +131,21 @@ sub welcome
 	else{$server->command ("/msg !nerdclub $nick: Long time, no ocean.");}
 }
 
+##################	
+##	PENIS	##	Created by palop
 ##################
-##	MAIN	##
-##################
+
+sub penis
+{
+	if($data eq "penis")
+	{
+		{$server->command("/kick !nerdclub $nick");
+		{$server->command("/msg !nerdclub No foul language!");
+	}
+
+}
+
+
 
 sub main {
 	my ($server, $data, $nick, $mask, $target) =@_;

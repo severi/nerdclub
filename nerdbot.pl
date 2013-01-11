@@ -40,7 +40,7 @@ sub insertQuote{
 	$quoteAt = $_[0];
 	$dsn = "dbi:mysql:$database:$host:$port";
 	$connect = DBI->connect($dsn, $user, $pw);
-	$query = "INSERT INTO Quotes(quote) VALUES(?)";
+	$query = "INSERT INTO Quotes(quote,id) VALUES(?, null)";
 	$query_handle = $connect->prepare($query);
 	$query_handle->execute($quoteAt);
 }
@@ -51,7 +51,7 @@ sub getQuotes{
 	$query = "SELECT * FROM Quotes";
 	$query_handle = $connect->prepare($query);
 	$query_handle->execute();
-	$query_handle->bind_columns(undef, \$quote);
+	$query_handle->bind_columns(undef, \$quote, \$q_id);
 	my @quoteArray;
 	while($query_handle->fetch()) { 
 		push(@quoteArray,$quote);

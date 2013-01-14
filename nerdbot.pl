@@ -3,7 +3,7 @@ use Irssi;
 use vars qw($VERSION %IRSSI);
 use DBI;
 use DBD::mysql;
-
+use LWP::Simple;
 
 require 'auth.pl';
 
@@ -131,9 +131,25 @@ sub welcome
 	else{$server->command ("/msg !nerdclub $nick: Long time, no ocean.");}
 }
 
-##################
+##############
+##	ORACLE	##
+##############
+
+sub askOracle
+{
+	my $question = $_[0];
+	my $url_open = "http://www.lintukoto.net/viihde/oraakkeli/index.php?kysymys=";
+	$url_open .= $_[0];
+	$url_open .= "&html";
+
+	my $content = get($url_open);
+	die "Couldn't get $url" unless defined $content;
+	return $content;
+}
+
+##############
 ##	MAIN	##
-##################
+##############
 
 sub main {
 	my ($server, $data, $nick, $mask, $target) =@_;
@@ -165,7 +181,13 @@ sub main {
 	{
 		my $part2 = substr($data, 5);
 		insertQuote("$part2");	
-		$server->command ("/msg !nerdclub Added Quote: $part2\n");
+		$server->command ("/msg !nerdclub Added Quote: $part2\n");	
+	}
+	elsif (substr($data,0,4)=~/^!ask/)
+	{
+		my $part2 = substr($data, 5);
+		my $answer = askOracle("$part2");	
+		$server->command ("/msg !nerdclub Answer: $answer\n");
 	}
 	
 	elsif ($data eq "!help")
